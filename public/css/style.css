@@ -673,6 +673,28 @@ video {
     transform: scale(1.1);
 }
 
+.event-logo.hitcon-2026-logo img {
+    display: none;
+}
+
+.event-logo.hitcon-2026-logo::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #c700c7 0%, #c700c7 42%, #000000 42%, #000000 58%, #c700c7 58%, #c700c7 100%);
+    -webkit-mask: url('/images/events/2026/HITCON.svg') no-repeat center;
+    mask: url('/images/events/2026/HITCON.svg') no-repeat center;
+    -webkit-mask-size: 82%;
+    mask-size: 82%;
+    transition: var(--transition);
+}
+
+.event-card:hover .event-logo.hitcon-2026-logo::after {
+    transform: scale(1.1);
+}
 .event-card:hover .event-logo {
     box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
     transform: rotate(5deg);
