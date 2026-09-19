@@ -57,10 +57,10 @@ async function compileEjs(srcViewName, destRelativePath, templateData) {
 async function main() {
     console.log('Starting build process...');
 
-    // Cloudflare Pages exposes CF_PAGES=1 during its Git-triggered build. Local
+    // Cloudflare Pages and Workers Builds expose different CI flags. Local
     // builds stay live so `wrangler dev` behaves like the Express dev server.
     const builtAt = new Date();
-    const isCloudflareBuild = process.env.CF_PAGES === '1';
+    const isCloudflareBuild = process.env.CF_PAGES === '1' || process.env.WORKERS_CI === '1';
     const templateData = {
         updateTime: {
             mode: isCloudflareBuild ? 'build' : 'live',
