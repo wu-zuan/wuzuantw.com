@@ -10,12 +10,19 @@ app.use(express.static(path.join(__dirname, 'public'), {
     maxAge: '1y'
 }));
 
+const liveUpdateTime = {
+    mode: 'live',
+    iso: '',
+    display: '正在同步本機時間…',
+    source: '本機即時'
+};
+
 app.get('/', (req, res) => {
-    res.render('index');
+    res.render('index', { updateTime: liveUpdateTime });
 });
 
 app.get('/project/pterodactyl-bot', (req, res) => {
-    res.render('project-pterodactyl');
+    res.render('project-pterodactyl', { updateTime: liveUpdateTime });
 });
 
 app.listen(PORT, () => {

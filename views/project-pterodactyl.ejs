@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="/css/devicon.min.css">
 
 
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.css?v=16">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript>
         <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -346,11 +346,18 @@
 
     <footer class="footer" data-aos="fade-up">
         <div class="container">
-            <p class="copyright">&copy;
-                <script>document.write(new Date().getFullYear())</script> Wuzuan. All rights reserved.
-            </p>
+            <div class="footer-meta">
+                <p class="copyright">&copy;
+                    <script>document.write(new Date().getFullYear())</script> Wuzuan. All rights reserved.
+                </p>
+                <p class="last-updated" data-update-mode="<%= updateTime.mode %>" title="<%= updateTime.source %>">
+                    <span>最後更新</span>
+                    <time datetime="<%= updateTime.iso %>"><%= updateTime.display %></time>
+                </p>
+            </div>
         </div>
     </footer>
+    <script defer src="/js/update-time.js?v=3"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({

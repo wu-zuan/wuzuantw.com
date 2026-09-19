@@ -22,7 +22,23 @@ function copyDir(src, dest) {
     }
 }
 
-async function compileEjs(srcViewName, destRelativePath) {
+function formatTaipeiTime(date) {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Taipei',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hourCycle: 'h23'
+    }).formatToParts(date);
+    const value = Object.fromEntries(parts.map(part => [part.type, part.value]));
+
+    return `${value.year}/${value.month}/${value.day} ${value.hour}:${value.minute}:${value.second}`;
+}
+
+async function compileEjs(srcViewName, destRelativePath, templateData) {
     const srcPath = path.join(viewsDir, `${srcViewName}.ejs`);
     const destPath = path.join(distDir, destRelativePath);
 
@@ -30,7 +46,7 @@ async function compileEjs(srcViewName, destRelativePath) {
 
     console.log(`Compiling ${srcViewName}.ejs -> ${destRelativePath}...`);
     try {
-        const html = await ejs.renderFile(srcPath, {});
+        const html = await ejs.renderFile(srcPath, templateData);
         fs.writeFileSync(destPath, html, 'utf-8');
     } catch (err) {
         console.error(`Error compiling ${srcViewName}.ejs:`, err);
@@ -40,6 +56,19 @@ async function compileEjs(srcViewName, destRelativePath) {
 
 async function main() {
     console.log('Starting build process...');
+
+    // Cloudflare Pages exposes CF_PAGES=1 during its Git-triggered build. Local
+    // builds stay live so `wrangler dev` behaves like the Express dev server.
+    const builtAt = new Date();
+    const isCloudflareBuild = process.env.CF_PAGES === '1';
+    const templateData = {
+        updateTime: {
+            mode: isCloudflareBuild ? 'build' : 'live',
+            iso: isCloudflareBuild ? builtAt.toISOString() : '',
+            display: isCloudflareBuild ? formatTaipeiTime(builtAt) : '正在同步本機時間…',
+            source: isCloudflareBuild ? 'Cloudflare Pages 建置' : '本機即時'
+        }
+    };
 
     if (fs.existsSync(distDir)) {
         console.log('Cleaning existing dist directory...');
@@ -52,11 +81,11 @@ async function main() {
         copyDir(publicDir, distDir);
     }
 
-    await compileEjs('index', 'index.html');
+    await compileEjs('index', 'index.html', templateData);
 
-    await compileEjs('project-pterodactyl', 'project-pterodactyl.html');
+    await compileEjs('project-pterodactyl', 'project-pterodactyl.html', templateData);
 
-    await compileEjs('project-pterodactyl', 'project/pterodactyl-bot/index.html');
+    await compileEjs('project-pterodactyl', 'project/pterodactyl-bot/index.html', templateData);
 
     console.log('Build completed successfully!');
 }

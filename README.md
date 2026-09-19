@@ -121,22 +121,3 @@ npx wrangler pages deploy dist
 
 ## Nginx 設定
 詳細的 Nginx 反向代理與 SSL 設定教學，請參考 [NGINX_SETUP.md](./NGINX_SETUP.md)。
-
-## 開發者
-
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://wuzuantw.com">
-        <img src="public/images/avatar.webp" width="100" alt="Wuzuan"><br>
-        <b>Wuzuan</b>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://sange.ge">
-        <img src="public/images/friends/Sangege.webp" width="100" alt="Sangege"><br>
-        <b>Sangege</b>
-      </a>
-    </td>
-  </tr>
-</table>
