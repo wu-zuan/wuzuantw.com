@@ -1,33 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const loadStylesheetWhenVisible = (selector, href) => {
-        const target = document.querySelector(selector);
-        if (!target) return;
-
-        const load = () => {
-            if (document.querySelector(`link[href="${href}"]`)) return;
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = href;
-            document.head.appendChild(link);
-        };
-
-        if (!('IntersectionObserver' in window)) {
-            load();
-            return;
-        }
-
-        const observer = new IntersectionObserver((entries) => {
-            if (entries.some(entry => entry.isIntersecting)) {
-                load();
-                observer.disconnect();
-            }
-        });
-        observer.observe(target);
-    };
-
-    loadStylesheetWhenVisible('#skills', '/css/devicon.min.css');
-    loadStylesheetWhenVisible('#contact', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
-
     const videos = document.querySelectorAll('video');
     const loadVideo = (video) => {
         if (video.dataset.src) {
@@ -275,112 +246,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const countdownElement = document.getElementById('countdown');
-    if (countdownElement) {
-        const birthdayDay = 27;
-        const birthdayMonth = 3;
-
-        const container = countdownElement.parentElement;
-        const label = container.querySelector('p');
-
-        function updateCountdown() {
-            const now = new Date();
-            let year = now.getFullYear();
-            let birthday = new Date(year, birthdayMonth, birthdayDay);
-
-            const isBirthday = now.getMonth() === birthdayMonth && now.getDate() === birthdayDay;
-
-            if (isBirthday) {
-                container.classList.add('is-birthday');
-                if (label) {
-                    label.innerText = 'Happy Birthday!';
-                    label.classList.add('birthday-title');
-                }
-                countdownElement.innerHTML = `<span class="countdown-text">就在今天啦 🎉</span>`;
-                countdownElement.classList.add('birthday-text');
-                countdownElement.setAttribute('data-birthday', 'HAPPY BIRTHDAY');
-
-                if (typeof confetti === 'function' && !window.confettiFired) {
-                    window.confettiFired = true;
-                    const duration = 15 * 1000;
-                    const animationEnd = Date.now() + duration;
-                    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-                    function randomInRange(min, max) {
-                        return Math.random() * (max - min) + min;
-                    }
-
-                    const interval = setInterval(function () {
-                        const timeLeft = animationEnd - Date.now();
-
-                        if (timeLeft <= 0) {
-                            return clearInterval(interval);
-                        }
-
-                        const particleCount = 50 * (timeLeft / duration);
-                        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-                        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-                    }, 250);
-
-                    confetti({
-                        particleCount: 150,
-                        spread: 70,
-                        origin: { y: 0.6 }
-                    });
-                }
-                return;
-            }
-
-            container.classList.remove('is-birthday');
-            if (label) {
-                label.innerText = '距離生日還有：';
-                label.classList.remove('birthday-title');
-            }
-            countdownElement.classList.remove('birthday-text');
-
-            if (now > birthday) {
-                birthday.setFullYear(year + 1);
-            }
-
-            const diff = birthday - now;
-
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-            countdownElement.innerHTML = `<span class="countdown-text">${days}天 ${hours}時 ${minutes}分 ${seconds}秒</span>`;
-
-            const y = birthday.getFullYear();
-            const m = String(birthday.getMonth() + 1).padStart(2, '0');
-            const d = String(birthday.getDate()).padStart(2, '0');
-
-            countdownElement.setAttribute('data-birthday', `${y}/${m}/${d}`);
-        }
-
-        container.addEventListener('click', () => {
-            if (container.classList.contains('is-birthday') && typeof confetti === 'function') {
-                confetti({
-                    particleCount: 100,
-                    spread: 70,
-                    origin: { y: 0.6 }
-                });
-            }
-        });
-
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
-    }
-
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
-                target.scrollIntoView({ behavior: 'smooth' });
+                const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                target.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' });
                 const navLinks = document.querySelector('.nav-links');
                 if (navLinks.classList.contains('active')) {
                     navLinks.classList.remove('active');
+                    const menu = document.querySelector('.hamburger');
+                    menu?.classList.remove('active');
+                    menu?.setAttribute('aria-expanded', 'false');
+                    menu?.setAttribute('aria-label', '開啟選單');
                 }
             }
         });
@@ -393,10 +272,13 @@ document.addEventListener('DOMContentLoaded', () => {
         hamburger.addEventListener('click', () => {
             navLinks.classList.toggle('active');
             hamburger.classList.toggle('active');
+            const expanded = navLinks.classList.contains('active');
+            hamburger.setAttribute('aria-expanded', String(expanded));
+            hamburger.setAttribute('aria-label', expanded ? '關閉選單' : '開啟選單');
         });
     }
 
-    if (typeof gsap !== 'undefined') {
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         gsap.registerPlugin(ScrollTrigger);
 
         gsap.to(".laptop", {
