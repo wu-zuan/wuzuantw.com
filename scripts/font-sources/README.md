@@ -17,8 +17,9 @@ python scripts/build-ink-fonts.py
 npm run build
 ```
 
-All supported characters, including those not currently used by the site, are
-shipped in disjoint Unicode subsets. New content within this repertoire loads
-the corresponding extended font automatically. Both weights have identical
-character coverage. The font's outlines and generated SVG lettering are OFL;
-they are not original-from-scratch Chinese glyph designs.
+The default command regenerates only the v2 site core subsets. Use
+`python scripts/build-ink-fonts.py --full` to regenerate the full v2 family,
+stylesheet, and coverage manifest when broader content requires it. The v1
+full family remains checked in. Both weights have identical character coverage.
+The font's outlines and generated SVG lettering are OFL; they are not
+original-from-scratch Chinese glyph designs.

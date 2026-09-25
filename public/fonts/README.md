@@ -20,9 +20,10 @@ the site's Traditional Chinese, English, numbers and punctuation, plus the
 upstream repertoire. It does not cover all of Unicode. System fallback remains
 available only for unsupported characters or when font files cannot load.
 
-Each weight has a preloaded 421-character site subset and 22 extended subsets.
-Unicode ranges are disjoint. Current pages load only the two core subsets;
-additional supported text automatically loads the appropriate extended subset.
+Current pages load only the small v2 core subsets in `ink-fonts-core.css`; all
+text in the rendered pages is covered by them. The v1 complete family remains
+available in `ink-fonts.css` for future content that needs a broader repertoire.
+Each v1 weight has 22 extended subsets with disjoint Unicode ranges.
 The current site's full text is checked against the font repertoire during QA.
 
 `ink/coverage.json` records source URLs, SHA-256 hashes, character coverage and

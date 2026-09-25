@@ -15,4 +15,4 @@ The palette remains the original `#0a0a12`, `#00f2ff`, `#7000ff`.
 See `../../fonts/README.md` for exact font scope and source attribution. Rebuild
 the font and wordmarks using `scripts/build-ink-fonts.py`. Site styles live in a
 single `public/css/style.css`; font subset declarations are generated separately
-in `public/css/ink-fonts.css`. There is no second theme override stylesheet.
+in `public/css/ink-fonts-core.css`. There is no second theme override stylesheet.

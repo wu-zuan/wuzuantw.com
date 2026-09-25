@@ -1,6 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
     const videos = document.querySelectorAll('video');
     const loadVideo = (video) => {
+        if (video.hasAttribute('data-defer-video')) {
+            video.removeAttribute('data-defer-video');
+            const start = () => {
+                const loadWhenIdle = () => {
+                    loadVideo(video);
+                    if (!document.hidden) video.play().catch(() => {});
+                };
+                if ('requestIdleCallback' in window) {
+                    requestIdleCallback(loadWhenIdle, { timeout: 2000 });
+                } else {
+                    setTimeout(loadWhenIdle, 0);
+                }
+            };
+            const deferUntilAfterIntro = () => setTimeout(start, 3000);
+            if (document.readyState === 'complete') deferUntilAfterIntro();
+            else window.addEventListener('load', deferUntilAfterIntro, { once: true });
+            return;
+        }
         if (video.dataset.src) {
             video.src = video.dataset.src;
             delete video.dataset.src;
@@ -66,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!child.hasAttribute('data-aos-delay')) {
                     child.setAttribute('data-aos-delay', ((index % modulo) + 1) * 100);
                 }
+                child.style.setProperty('--reveal-delay', `${Math.min(500, Number(child.dataset.aosDelay) || 0)}ms`);
             });
         });
     });
@@ -178,10 +197,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             window.setTimeout(updateMapControls, 350);
-
-            if (typeof AOS !== 'undefined') {
-                AOS.refreshHard();
-            }
         });
     });
 
@@ -234,18 +249,6 @@ document.addEventListener('DOMContentLoaded', () => {
         history.scrollRestoration = 'auto';
     }
 
-    if (typeof AOS !== 'undefined') {
-        AOS.init({
-            duration: 800,
-            once: true,
-            offset: 100
-        });
-
-        window.addEventListener('load', () => {
-            setTimeout(() => AOS.refresh(), 100);
-        });
-    }
-
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
@@ -278,34 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        gsap.registerPlugin(ScrollTrigger);
-
-        gsap.to(".laptop", {
-            rotateY: "0deg",
-            rotateX: "-5deg",
-            scrollTrigger: {
-                trigger: ".hero",
-                start: "top top",
-                end: "bottom top",
-                scrub: 1,
-            }
-        });
-
-        gsap.to(".laptop", {
-            y: -15,
-            repeat: -1,
-            yoyo: true,
-            duration: 4,
-            ease: "sine.inOut",
-            scrollTrigger: {
-                trigger: ".hero",
-                start: "top bottom",
-                end: "bottom top",
-                toggleActions: "play pause resume pause"
-            }
-        });
-
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         const codeSnippets = [
             'npm i discord.js', 'npm run start', 'pm2 start index.js --name "bot"',
             'node src/index.js', 'docker-compose up -d', 'npx prisma db push',
@@ -333,13 +309,8 @@ document.addEventListener('DOMContentLoaded', () => {
             span.style.fontSize = (Math.random() * 0.5 + 0.5) + 'rem';
             document.body.appendChild(span);
 
-            gsap.to(span, {
-                y: -100,
-                opacity: 0.2,
-                duration: Math.random() * 10 + 8,
-                ease: "none",
-                onComplete: () => span.remove()
-            });
+            span.style.animationDuration = `${Math.random() * 10 + 8}s`;
+            span.addEventListener('animationend', () => span.remove(), { once: true });
         }
 
         setInterval(createFloatingCode, 8000);
