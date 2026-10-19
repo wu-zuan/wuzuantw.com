@@ -215,6 +215,7 @@ em { font-style: normal; }
 .event-logo img, .event-logo video { width: 100%; height: 100%; object-fit: cover; }
 .event-logo.logo-contain { padding: 11px; }
 .event-logo.logo-contain img, .event-logo.logo-contain video { object-fit: contain; }
+.event-logo.pycon-2026-logo img { transform: scale(2.15); }
 .event-logo.hitcon-2025-logo img, .event-logo.hitcon-2026-logo img { opacity: 0; }
 .event-logo.hitcon-2025-logo::after, .event-logo.hitcon-2026-logo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(#0014c7 42%, #000 42%, #000 58%, #0014c7 58%); mask: url('/images/events/2025/HITCON.svg') center / 82% no-repeat; }
 .event-logo.hitcon-2026-logo::after { background: linear-gradient(#c700c7 42%, #000 42%, #000 58%, #c700c7 58%); mask-image: url('/images/events/2026/HITCON.svg'); }
